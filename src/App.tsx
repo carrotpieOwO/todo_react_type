@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
 import './App.css';
 import { Layout, Dropdown, Space, Collapse, Card, Tooltip, Button, Row, theme, Divider, Checkbox, Progress, Badge, Typography, Input, MenuProps } from 'antd';
-import { ClockCircleOutlined, DeleteTwoTone, EditTwoTone, ControlTwoTone } from '@ant-design/icons';
+import { ClockCircleOutlined, ControlTwoTone } from '@ant-design/icons';
 
 import dayjs from 'dayjs';
-import TodoForm from './TodoForm';
+import TodoForm from './components/TodoForm';
+import TodoList from './components/TodoList';
 
 const { Header, Footer, Content } = Layout;
 const { Search } = Input;
@@ -120,32 +120,9 @@ function App() {
           <Progress percent={30.9} status="active" strokeColor={{ from: '#fb9ec4', to: '#8865ff' }} />
           <div style={{textAlign: 'center', padding: '15px 0'}}>조금 더 분발하세요!💪🏻</div>
           <TodoForm/>
-          <Card size='small' style={{margin: '4px 0'}}>
-            <Row justify='space-between'>
-              <Checkbox>할일 1</Checkbox>
-                <Space style={{marginLeft: 'auto', columnGap: 0}}>
-                  <div style={{width: '174px', textAlign: 'right'}}>
-                    <ClockCircleOutlined></ClockCircleOutlined> 12/31 24:24
-                  </div>                    
-                  <Button type='ghost' size='small'><EditTwoTone /></Button>
-                  <Button type='ghost' size='small'><DeleteTwoTone twoToneColor="#eb2f96"/></Button>
-                </Space>                 
-            </Row>
-          </Card>
-          <Card size='small' style={{margin: '4px 0'}}>
-            <Row justify='space-between'>
-              <Checkbox>할일 2</Checkbox>
-                <Space wrap style={{marginLeft: 'auto',  columnGap: 0}}>
-                  <div style={{width: '174px', textAlign: 'right'}}>
-                    <ClockCircleOutlined></ClockCircleOutlined> 01/01 09:00
-                  </div>                    
-                  <Button type='ghost' size='small'><EditTwoTone /></Button>
-                  <Button type='ghost' size='small'><DeleteTwoTone twoToneColor="#eb2f96"/></Button>
-                </Space>    
-            </Row>     
-          </Card>
+          <TodoList/>
         </Content>
-        <Footer>
+        <Footer style={{textAlign: 'center'}}>
           ha0 Todo❣️ ©2023 Created by ha0peno
         </Footer>
       </Layout>
