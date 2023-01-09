@@ -2,12 +2,12 @@ import { Space, Card, Button, Row, Divider, Input,  DatePicker, TimePicker, Form
 import { PlusSquareTwoTone } from '@ant-design/icons';
 import type { InputRef } from 'antd';
 import dayjs from 'dayjs';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import type { RangePickerProps } from 'antd/es/date-picker';
 import uuid from 'react-uuid'
 import TagList from './TagList';
 import { Tag } from './TagList';
-import { addTodo } from '../store';
+import { addTodo, setAddForm, setEditForm } from '../store';
 import { Dispatch } from 'redux';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux'
@@ -21,11 +21,17 @@ export interface Todo {
     done :boolean,
     tag? :Tag,
 }
+export const disabledDate: RangePickerProps['disabledDate'] = (current) => {
+    // Can not select days before today and today
+    return current < dayjs().startOf('day');
+};
+export const blank_pattern = /\S/g;
 
 function TodoForm() {
     const inputRef = useRef<InputRef>(null);
     const dispatch :Dispatch = useDispatch()
     let tagList = useSelector((state :RootState) => state.tag);
+    let isOpen = useSelector((state :RootState) => state.form.addForm);
 
     useEffect(() => {
         inputRef.current?.focus({
@@ -33,9 +39,16 @@ function TodoForm() {
         });
     })
 
-    const [ input, setInput ] = useState(false);
+    const onCancel = () => {
+        dispatch(setAddForm(false));
+    }
+    
+    const onOpen = () => {
+        dispatch(setAddForm(true));
+        dispatch(setEditForm(false));
+    }
 
-    const onSubmit = (values: any) => {        
+    const onSubmit = (values: any) => {    
         const newTodo :Todo = {            
             ...values, 
             id :uuid(), 
@@ -46,24 +59,14 @@ function TodoForm() {
         }
         
         dispatch(addTodo(newTodo));
-        setInput(false)
+        dispatch(setAddForm(false));
     }
 
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
     };
-
-    const disabledDate: RangePickerProps['disabledDate'] = (current) => {
-        // Can not select days before today and today
-        return current < dayjs().startOf('day');
-    };
     
-    const onCancel = () => {
-        setInput(!input)
-    }
-    const blank_pattern = /\S/g;
-
-    if (input) {
+    if (isOpen) {
         return (
             <Card bordered={false} >
                 <Form onFinish={onSubmit} onFinishFailed={onFinishFailed}>
@@ -79,7 +82,7 @@ function TodoForm() {
                             <Form.Item name="time">
                                 <TimePicker format={'HH:mm'} />
                             </Form.Item>
-                            <TagList />
+                            <TagList width={200}/>
                         </Space>
                         <Space wrap>
                             <Button onClick={onCancel} htmlType="button">취소</Button>
@@ -91,7 +94,7 @@ function TodoForm() {
         );
     } else {
         return (
-            <Card size='small' style={{margin: '4px 0', textAlign: 'left'}} onClick={()=> setInput(!input)}>
+            <Card size='small' style={{margin: '4px 0', textAlign: 'left'}} onClick={onOpen}>
                 <PlusSquareTwoTone style={{fontSize: '18px'}} twoToneColor="#eb2f96"/> 작업 추가하기
             </Card>
         )

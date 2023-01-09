@@ -1,4 +1,4 @@
-import { Space, Button, Row, Divider, Input,  Select, Form } from 'antd';
+import { Button, Row, Divider, Input,  Select, Form } from 'antd';
 import { PlusOutlined, BgColorsOutlined } from '@ant-design/icons';
 import React, { useState, useRef } from 'react';
 import { ColorChangeHandler, CirclePicker } from "react-color";
@@ -17,8 +17,24 @@ export interface Tag {
     color :string;
 }
 
+const colors = [
+    "#0C797D",
+    "#16A5A5",
+    "#68CCCA",
 
-function TagList() {
+    "#0062B1",
+    "#009CE0",
+    "#73D8FF",
+
+    "#653294",
+    "#7B64FF",
+    "#AEA1FF",
+
+    "#AB149E",
+    "#FA28FF",
+    "#FDA1FF"
+]
+function TagList(props :{width?:number}) {
     const inputRef = useRef<InputRef>(null);
     const dispatch :Dispatch = useDispatch()
     let tagList = useSelector((state :RootState) => state.tag);
@@ -51,24 +67,25 @@ function TagList() {
     return (
         <Form.Item name="tag">
             <Select
-                style={{ width: 300 }} placeholder="태그 추가" dropdownRender={(menu) => (                                    
+                style={{width: props.width}} placeholder="태그 추가" dropdownRender={(menu) => (                                    
                     <>
                         {menu}
                         <Divider style={{ margin: '8px 0' }} />
-                        <Space style={{ padding: '0 8px 4px' }}>
-                            <Input.Group compact>                                                                                                                                                                            
-                                <Input placeholder="Please enter item" ref={inputRef} value={tag} onChange={onTagChange} style={{ width: 'calc(100% - 50px)' }}></Input>                                                
+                        <Row align={'middle'} justify={'center'}>
+                            <Input.Group compact>
+                                <Input placeholder="enter tag" ref={inputRef} value={tag} onChange={onTagChange} style={{ width: 'calc(100% - 50px)' }}></Input>                                                
                                 <Button onClick={setColorPicker}><BgColorsOutlined style={{color: color}}/></Button>
                             </Input.Group>
-                            <Button type="text" icon={<PlusOutlined />} onClick={addItem}>Add</Button>
-                        </Space>
+                        </Row>
                         {
                             showColor && (
                                 <Divider>
-                                    <CirclePicker onChangeComplete={onColorChange}/>
+                                    <CirclePicker onChangeComplete={onColorChange} width={`${props.width}`} colors={colors}/>
                                 </Divider>
                             )
-                        }             
+                        }
+                        <Button block type="primary" style={{marginTop: '10px'}} icon={<PlusOutlined />} onClick={addItem}>Add</Button>
+
                     </>
                 )}
                 onDropdownVisibleChange={open => !open && setShowColor(false)}
