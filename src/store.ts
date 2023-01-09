@@ -19,10 +19,13 @@ const todoSlice = createSlice({
             state[targetIndex].tag = payload.tag;
         },
         deleteTodo (state, action :PayloadAction<string>) {
-
+            const targetIndex = state.findIndex(todo => todo.id === action.payload);
+            state.splice(targetIndex, 1);
         },
-        setDone (state, action:PayloadAction<boolean>) {
-            
+        // action.payload = [id, done]
+        setDone (state, action:PayloadAction<[string, boolean]>) {
+            const targetIndex = state.findIndex(todo => todo.id === action.payload[0]);
+            state[targetIndex].done = action.payload[1];            
         }
     }
 })
@@ -66,6 +69,6 @@ let store = configureStore({
 
 export default store
 export type RootState = ReturnType<typeof store.getState>
-export let { addTodo, editTodo, deleteTodo } = todoSlice.actions
+export let { addTodo, editTodo, deleteTodo, setDone } = todoSlice.actions
 export let { addTag } = tagSlice.actions
 export let { setAddForm, setEditForm } = formSlice.actions

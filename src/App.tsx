@@ -5,6 +5,7 @@ import { ClockCircleOutlined, ControlTwoTone } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
+import ProgressBar from './components/ProgressBar';
 
 const { Header, Footer, Content } = Layout;
 const { Search } = Input;
@@ -117,8 +118,7 @@ function App() {
             </Panel>
           </Collapse>
           <Divider orientation="left">오늘의 할일(3) ✍🏻</Divider>
-          <Progress percent={30.9} status="active" strokeColor={{ from: '#fb9ec4', to: '#8865ff' }} />
-          <div style={{textAlign: 'center', padding: '15px 0'}}>조금 더 분발하세요!💪🏻</div>
+          <ProgressBar/>
           <TodoForm/>
           <TodoList/>
         </Content>

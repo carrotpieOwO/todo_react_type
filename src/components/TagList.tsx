@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { addTag } from '../store';
 import { useSelector } from 'react-redux'
 import { RootState } from '../store'
-
+import { blank_pattern } from './TodoForm';
 const { Option } = Select;
 const defaultTagColor = '#d8d8d8';
 
@@ -56,12 +56,14 @@ function TagList(props :{width?:number}) {
     }
     const addItem = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
         e.preventDefault();
-        dispatch(addTag({tag, color}))
-        setTag('');
-        setColor(defaultTagColor);
-        setTimeout(() => {
-            inputRef.current?.focus();
-        }, 0);
+        if(blank_pattern.test(tag)) {
+            dispatch(addTag({tag, color}))
+            setTag('');
+            setColor(defaultTagColor);
+            setTimeout(() => {
+                inputRef.current?.focus();
+            }, 0);
+        }
     }
   
     return (

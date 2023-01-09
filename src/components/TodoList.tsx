@@ -1,8 +1,8 @@
-import { Space, Card, Button, Row, Checkbox, Tag, Form, Input, DatePicker, TimePicker, Col } from 'antd';
+import { Space, Card, Button, Row, Checkbox, Tag, Form, Input, DatePicker, TimePicker, Col, Popconfirm } from 'antd';
 import { ClockCircleOutlined, DeleteTwoTone, EditTwoTone, CheckOutlined } from '@ant-design/icons';
 import type { InputRef } from 'antd';
 import { useDispatch, useSelector } from 'react-redux'
-import { RootState, setEditForm, editTodo, setAddForm } from '../store'
+import { RootState, setEditForm, setAddForm, editTodo, deleteTodo, setDone } from '../store'
 import { Dispatch } from 'redux';
 import React, { useState, useRef, useEffect } from 'react';
 import TagList from './TagList';
@@ -82,16 +82,27 @@ function TodoList() {
                     :
                     <Card key={todo.id} size='small' style={{margin: '4px 0'}}>
                         <Row justify='space-between'>
-                            <Checkbox>
+                            <Checkbox checked={todo.done} onChange={(e) => {
+                                dispatch(setDone([todo.id, e.target.checked]))                          
+                            }}>
                                 {todo.tag && <Tag color={todo.tag.color}>{todo.tag.tag}</Tag>}
-                                {todo.todo}
+                                <span style={todo.done ? {textDecoration: 'line-through'} : {}}>{todo.todo}</span>
                             </Checkbox>
                             <Space style={{marginLeft: 'auto', columnGap: 0}}>
                                 <div style={{width: '174px', textAlign: 'right'}}>
                                     <ClockCircleOutlined></ClockCircleOutlined> {todo.date} {todo.time}
                                 </div>                    
                                 <Button type='ghost' size='small' htmlType='button' onClick={onOpen(todo.id)}><EditTwoTone /></Button>
-                                <Button type='ghost' size='small'><DeleteTwoTone twoToneColor="#eb2f96"/></Button>
+                                <Popconfirm
+                                    title="Delete the task"
+                                    description="Are you sure to delete this task?"                                                                    
+                                    okText="Yes"
+                                    cancelText="No"
+                                    onConfirm={() => {dispatch(deleteTodo(todo.id))}}
+                                >
+                                    <Button type='ghost' size='small' htmlType='button'><DeleteTwoTone twoToneColor="#eb2f96"/></Button>
+                                </Popconfirm>
+                                
                             </Space>                 
                         </Row>
                     </Card> 
