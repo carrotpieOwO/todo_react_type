@@ -32,6 +32,7 @@ function TodoForm() {
     const dispatch :Dispatch = useDispatch()
     let tagList = useSelector((state :RootState) => state.tag);
     let isOpen = useSelector((state :RootState) => state.form.addForm);
+    let selectedDay = useSelector((state :RootState) => state.selectedDay);    
 
     useEffect(() => {
         inputRef.current?.focus({
@@ -76,8 +77,8 @@ function TodoForm() {
                     <Divider></Divider>
                     <Row justify={'space-between'}>
                         <Space wrap>
-                            <Form.Item name="date" initialValue={dayjs()}>
-                                <DatePicker disabledDate={disabledDate} />
+                            <Form.Item name="date" initialValue={dayjs(selectedDay)}>
+                                <DatePicker disabledDate={disabledDate}/>
                             </Form.Item>                            
                             <Form.Item name="time">
                                 <TimePicker format={'HH:mm'} />

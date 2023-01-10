@@ -1,6 +1,9 @@
 import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Todo } from './components/TodoForm';
 import { Tag } from './components/TagList';
+import dayjs from 'dayjs';
+import weekday from 'dayjs/plugin/weekday';
+dayjs.extend(weekday)
 
 const initialTodoState :Todo[] = [];
 const todoSlice = createSlice({
@@ -45,7 +48,6 @@ const initialFormState = {
     addForm: false,
     editform: false
 }
-
 const formSlice = createSlice({
     name: 'form',
     initialState: initialFormState,
@@ -59,11 +61,52 @@ const formSlice = createSlice({
     }
 })
 
+const selectedDaySlice = createSlice({
+    name: 'selectedDay',
+    initialState: dayjs().format('YYYY-MM-DD'),
+    reducers: {
+        setDay (state, action:PayloadAction<string>) {
+            console.log('action', action.payload)
+            return action.payload;
+        }
+    }
+})
+
+let initialWeekState :string[] = [];
+const firstDay = dayjs().weekday(+1);
+for(let i =0; i < 7; i++) {
+    let targetDay = dayjs(firstDay).add(i, 'day').format('YYYY-MM-DD');    
+    initialWeekState.push(targetDay)
+}
+
+const weekSlice = createSlice({
+    name: 'week',
+    initialState: initialWeekState,
+    reducers: {
+        setPrevWeek (state) {
+            let monDay = dayjs(state[0]).subtract(7, 'day').weekday(+1);
+            for(let i =0; i < 7; i++) {
+                let targetDay = dayjs(monDay).add(i, 'day').format('YYYY-MM-DD');    
+                state[i] = targetDay        
+            }
+        },
+        setNextWeek (state) {
+            let monDay = dayjs(state[0]).add(7, 'day').weekday(+1);
+            for(let i =0; i < 7; i++) {
+                let targetDay = dayjs(monDay).add(i, 'day').format('YYYY-MM-DD');    
+                state[i] = targetDay
+            }            
+        }
+    }
+})
+
 let store = configureStore({
     reducer: {
         todo : todoSlice.reducer,
         tag : tagSlice.reducer,
         form : formSlice.reducer,
+        selectedDay : selectedDaySlice.reducer,
+        week : weekSlice.reducer
     }
 })
 
@@ -72,3 +115,5 @@ export type RootState = ReturnType<typeof store.getState>
 export let { addTodo, editTodo, deleteTodo, setDone } = todoSlice.actions
 export let { addTag } = tagSlice.actions
 export let { setAddForm, setEditForm } = formSlice.actions
+export let { setDay } = selectedDaySlice.actions
+export let { setPrevWeek, setNextWeek } = weekSlice.actions

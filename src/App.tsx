@@ -1,18 +1,16 @@
 import './App.css';
-import { Layout, Dropdown, Space, Collapse, Card, Tooltip, Button, Row, theme, Divider, Checkbox, Progress, Badge, Typography, Input, MenuProps } from 'antd';
-import { ClockCircleOutlined, ControlTwoTone } from '@ant-design/icons';
+import { Layout, Dropdown, Space, Button, Row, theme, Input, MenuProps } from 'antd';
+import { ControlTwoTone } from '@ant-design/icons';
 
-import dayjs from 'dayjs';
+import WeekNavi from './components/WeekNavi';
+import DayNavi from './components/DayNavi';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
 import ProgressBar from './components/ProgressBar';
+import OverdueList from './components/OverdueList';
 
 const { Header, Footer, Content } = Layout;
 const { Search } = Input;
-const { Text } = Typography;
-const { Panel } = Collapse;
-
-const ButtonGroup = Button.Group;
 
 const items: MenuProps['items'] = [
   {
@@ -46,9 +44,10 @@ const items: MenuProps['items'] = [
     ]
   },
 ]
+
 function App() {
   const {
-    token: { colorBgContainer, pink },
+    token: { pink },
   } = theme.useToken();
 
   return (
@@ -66,58 +65,13 @@ function App() {
         </Header>
         <Content style={{ padding: '0 50px', margin: '16px 0' }}>
           <Row justify="end" align={'middle'} style={{paddingBottom: '10px'}}>
-            <ButtonGroup style={{paddingRight: '10px'}}>
-              <Tooltip placement="bottom" title={'지난주'}>
-                <Button>👈🏻</Button>
-              </Tooltip>
-              <Tooltip placement="bottom" title={'다음주'}>
-                <Button>👉🏻</Button>
-              </Tooltip>
-            </ButtonGroup>
+            <WeekNavi/>
             <Dropdown menu={{ items,  selectable: true, defaultSelectedKeys: ['3']}} placement="bottom">
               <Button><ControlTwoTone style={{fontSize: '15px'}} twoToneColor="#eb2f96"/> 보기</Button>
             </Dropdown>
           </Row>
-          <Row justify="center" style={{background: colorBgContainer, padding: '16px 0'}}>
-            <Space wrap size={120}>
-              <Space direction='vertical' align='center'>
-                <Button type="text" shape="circle" size="large">월</Button>
-                <div>1/1</div>
-              </Space>
-              
-              <Button type="text" shape="circle" size="large">화</Button>
-              <Button type="text" shape="circle" size="large">수</Button>
-              <Button type="text" shape="circle" size="large">목</Button>
-              <Button type="text" shape="circle" size="large">금</Button>
-              <Button type="text" shape="circle" size="large">토</Button>
-              <Button type="text" shape="circle" size="large">일</Button>
-            </Space>
-          </Row>
-          <Collapse defaultActiveKey={['1']} style={{marginTop: '20px'}} ghost>
-            <Panel header="기한이 지난(2) 🗓" key="1" style={{textAlign: 'left'}}>
-              <Badge.Ribbon text="D+3" color="pink">
-                <Card size='small' style={{margin: '4px 0'}}>
-                  <Row justify='space-between'>
-                    <Checkbox><Text>기한이 지난1</Text></Checkbox>
-                    <Text type="danger" style={{marginRight: '30px'}}>
-                      <ClockCircleOutlined></ClockCircleOutlined> 12/29
-                    </Text>
-                  </Row>                            
-                </Card>
-              </Badge.Ribbon>
-              <Badge.Ribbon text="D+1" color="pink">
-                <Card size='small'>
-                  <Row justify='space-between'>
-                    <Checkbox>기한이 지난 2</Checkbox>
-                    <Text type="danger" style={{marginRight: '30px'}}>
-                      <ClockCircleOutlined></ClockCircleOutlined> 12/31
-                    </Text>
-                  </Row>     
-                </Card>
-            </Badge.Ribbon>
-            </Panel>
-          </Collapse>
-          <Divider orientation="left">오늘의 할일(3) ✍🏻</Divider>
+          <DayNavi/>
+          <OverdueList/>
           <ProgressBar/>
           <TodoForm/>
           <TodoList/>

@@ -14,8 +14,10 @@ function TodoList() {
     let todoList = useSelector((state :RootState) => state.todo);
     let tagList = useSelector((state :RootState) => state.tag);
     let isOpen = useSelector((state :RootState) => state.form.editform);
+    let selectedDay = useSelector((state :RootState) => state.selectedDay);    
+    let todayList = todoList.filter(todo => todo.date === selectedDay);
     const dispatch :Dispatch = useDispatch();
-    
+
     const [ editTarget, setEditTarget ] = useState('');
 
     useEffect(() => {
@@ -50,26 +52,26 @@ function TodoList() {
     return (        
         <>
             {
-                todoList.map(todo =>
+                todayList.map(todo =>
                     todo.id === editTarget &&  isOpen ?
                     <Card key={todo.id} size='small' style={{margin: '4px 0'}}>
-                        <Form onFinish={onSubmit} onFinishFailed={onFinishFailed} initialValues={{ todo: todo.todo, date: dayjs(todo.date), time: todo.time && dayjs(todo.date + todo.time), tag: todo.tag?.tag}}>
+                        <Form onFinish={onSubmit} onFinishFailed={onFinishFailed} initialValues={{tag: todo.tag?.tag}}>
                             <Row justify={'space-between'}> 
                                 <Col span={4}>
                                     <TagList></TagList>
                                 </Col>
                                 <Col span={13}>
-                                    <Form.Item name="todo" rules={[{required: true, pattern: blank_pattern, message: '오늘의 할일을 입력해 주세요.'}]}>
+                                    <Form.Item name="todo" rules={[{required: true, pattern: blank_pattern, message: '오늘의 할일을 입력해 주세요.'}]} initialValue={todo.todo}>
                                         <Input ref={inputRef} placeholder='오늘의 할일은?'/>
                                     </Form.Item>
                                 </Col>
                                 <Col span={3}>
-                                    <Form.Item name="date">
+                                    <Form.Item name="date" initialValue={dayjs(todo.date)}>
                                         <DatePicker disabledDate={disabledDate} style={{width: '100%'}} />
                                     </Form.Item>
                                 </Col>
                                 <Col span={2}>
-                                    <Form.Item name="time">
+                                    <Form.Item name="time" initialValue={todo.time && dayjs(todo.date + todo.time)}>
                                         <TimePicker format={'HH:mm'}/>
                                     </Form.Item>
                                 </Col>
