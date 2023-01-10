@@ -100,13 +100,25 @@ const weekSlice = createSlice({
     }
 })
 
+type layoutType = 'board' | 'timeLine';
+const layoutSlice = createSlice({
+    name: 'layout',
+    initialState: 'board',
+    reducers: {
+        setLayout (state, action:PayloadAction<layoutType>) {
+            return action.payload;
+        }
+    }
+})
+
 let store = configureStore({
     reducer: {
         todo : todoSlice.reducer,
         tag : tagSlice.reducer,
         form : formSlice.reducer,
         selectedDay : selectedDaySlice.reducer,
-        week : weekSlice.reducer
+        week : weekSlice.reducer,
+        layout : layoutSlice.reducer,
     }
 })
 
@@ -117,3 +129,4 @@ export let { addTag } = tagSlice.actions
 export let { setAddForm, setEditForm } = formSlice.actions
 export let { setDay } = selectedDaySlice.actions
 export let { setPrevWeek, setNextWeek } = weekSlice.actions
+export let { setLayout } = layoutSlice.actions
