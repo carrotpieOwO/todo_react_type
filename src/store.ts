@@ -111,6 +111,16 @@ const layoutSlice = createSlice({
     }
 })
 
+const filterSlice = createSlice({
+    name: 'filter',
+    initialState: 'all',
+    reducers: {
+        setFilter (state, action:PayloadAction<string>) {
+            return action.payload;
+        }
+    }
+})
+
 let store = configureStore({
     reducer: {
         todo : todoSlice.reducer,
@@ -119,6 +129,7 @@ let store = configureStore({
         selectedDay : selectedDaySlice.reducer,
         week : weekSlice.reducer,
         layout : layoutSlice.reducer,
+        filter : filterSlice.reducer,
     }
 })
 
@@ -130,3 +141,4 @@ export let { setAddForm, setEditForm } = formSlice.actions
 export let { setDay } = selectedDaySlice.actions
 export let { setPrevWeek, setNextWeek } = weekSlice.actions
 export let { setLayout } = layoutSlice.actions
+export let { setFilter } = filterSlice.actions

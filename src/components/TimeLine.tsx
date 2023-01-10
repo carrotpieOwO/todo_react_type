@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState, setDone } from '../store'
 import { Dispatch } from 'redux';
 import { Todo } from './TodoForm';
+import { filterTodo } from './TodoList';
 
 function getTime(date?: Date) {
     return date != null ? date.getTime() : 0;
@@ -11,14 +12,18 @@ function getTime(date?: Date) {
 function TimeLine() {
     let todoList = useSelector((state :RootState) => state.todo);
     let selectedDay = useSelector((state :RootState) => state.selectedDay);
+    let filter = useSelector((state :RootState) => state.filter);
+
     const dispatch :Dispatch = useDispatch();
 
     let todayList = todoList.filter(todo => todo.date === selectedDay);
+    let filteredTodo = filterTodo(todayList, filter);
+
     let timeList:TimeTodo[] = [];
     interface TimeTodo extends Todo {
         time :string
     }
-    todayList.forEach(todo => {
+    filteredTodo.forEach(todo => {
         todo.time && timeList.push(todo as TimeTodo)
     })
    
@@ -26,11 +31,11 @@ function TimeLine() {
         return getTime(new Date(`${a.date} ${a.time}`)) - getTime(new Date(`${b.date} ${b.time}`));
     })
 
-    let noTimeList = todayList.filter(todo => !todo.time)    
+    let noTimeList = filteredTodo.filter(todo => !todo.time)    
 
     return (
         <> {
-            todayList.length > 0 &&
+            filteredTodo.length > 0 &&
                 <Card style={{paddingTop: 40, marginTop: 20}}>
                     <Timeline mode='left' style={{alignItems: 'middle'}}>
                         {

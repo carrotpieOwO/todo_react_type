@@ -2,7 +2,7 @@
 import { Dropdown, Button, MenuProps } from 'antd';
 import { ControlTwoTone, FilterTwoTone } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../store'
+import { RootState, setFilter } from '../store'
 import { Dispatch } from 'redux';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 
@@ -17,6 +17,7 @@ function Filter() {
 
     const handleMenuClick: MenuProps['onClick'] = (e) => {
         console.log('click', e);
+        dispatch(setFilter(e.key));
     };
 
     const items: MenuProps['items'] = [
