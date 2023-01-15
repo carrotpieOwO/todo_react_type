@@ -1,7 +1,8 @@
-import { Progress, Divider } from 'antd';
+import { Progress, Divider, Typography, Row } from 'antd';
 import { useSelector } from 'react-redux'
 import { RootState } from '../store'
 
+const { Text } = Typography;
 
 function ProgressBar() {
     const todoList = useSelector((state :RootState) => state.todo);
@@ -22,7 +23,9 @@ function ProgressBar() {
         <>
             <Divider orientation="left">오늘의 할일({todayList.length}) ✍🏻</Divider>
             <Progress percent={percentage} status="active" strokeColor={{ from: '#fb9ec4', to: '#8865ff' }} />
-            <div style={{textAlign: 'center', padding: '15px 0'}}>{message}</div>
+            <Row justify={'center'} style={{'margin': '15px 0'}}>
+                <Text>{message}</Text>
+            </Row>            
         </>
     )
 }

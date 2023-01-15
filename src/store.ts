@@ -1,9 +1,19 @@
 import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Todo } from './components/TodoForm';
 import { Tag } from './components/TagList';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
 dayjs.extend(weekday)
+
+const themeSlice = createSlice({
+    name: 'theme',
+    initialState: true,
+    reducers: {
+        changeTheme (state, action :PayloadAction<boolean>) {
+            return action.payload
+        }
+    }
+});
 
 const initialTodoState :Todo[] = [];
 const todoSlice = createSlice({
@@ -72,30 +82,31 @@ const selectedDaySlice = createSlice({
     }
 })
 
-let initialWeekState :string[] = [];
-const firstDay = dayjs().weekday(+1);
-for(let i =0; i < 7; i++) {
-    let targetDay = dayjs(firstDay).add(i, 'day').format('YYYY-MM-DD');    
-    initialWeekState.push(targetDay)
+function createWeek(targetDate :Dayjs) {
+    let weekArr = [];
+    for(let i =0; i < 7; i++) {
+        let targetDay = dayjs(targetDate).add(i, 'day').format('YYYY-MM-DD');    
+        weekArr.push(targetDay)
+    }
+    return weekArr;
 }
 
+const firstDay = dayjs().weekday(0);
+let initialWeekState :string[] = createWeek(firstDay);
 const weekSlice = createSlice({
     name: 'week',
     initialState: initialWeekState,
     reducers: {
+        setThisWeek (state) {
+            return createWeek(dayjs())            
+        },
         setPrevWeek (state) {
-            let monDay = dayjs(state[0]).subtract(7, 'day').weekday(+1);
-            for(let i =0; i < 7; i++) {
-                let targetDay = dayjs(monDay).add(i, 'day').format('YYYY-MM-DD');    
-                state[i] = targetDay        
-            }
+            let targetDay = dayjs(state[0]).subtract(7, 'day').weekday(0);
+            return createWeek(targetDay);
         },
         setNextWeek (state) {
-            let monDay = dayjs(state[0]).add(7, 'day').weekday(+1);
-            for(let i =0; i < 7; i++) {
-                let targetDay = dayjs(monDay).add(i, 'day').format('YYYY-MM-DD');    
-                state[i] = targetDay
-            }            
+            let targetDay = dayjs(state[0]).add(7, 'day').weekday(0);
+            return createWeek(targetDay);        
         }
     }
 })
@@ -121,8 +132,19 @@ const filterSlice = createSlice({
     }
 })
 
+const searchSlice = createSlice({
+    name: 'search',
+    initialState: '',
+    reducers: {
+        setSearch (state, action:PayloadAction<string>) {
+            return action.payload.toUpperCase();
+        }
+    }
+})
+
 let store = configureStore({
     reducer: {
+        theme : themeSlice.reducer,
         todo : todoSlice.reducer,
         tag : tagSlice.reducer,
         form : formSlice.reducer,
@@ -130,15 +152,18 @@ let store = configureStore({
         week : weekSlice.reducer,
         layout : layoutSlice.reducer,
         filter : filterSlice.reducer,
+        search : searchSlice.reducer,
     }
 })
 
 export default store
 export type RootState = ReturnType<typeof store.getState>
+export let { changeTheme } = themeSlice.actions
 export let { addTodo, editTodo, deleteTodo, setDone } = todoSlice.actions
 export let { addTag } = tagSlice.actions
 export let { setAddForm, setEditForm } = formSlice.actions
 export let { setDay } = selectedDaySlice.actions
-export let { setPrevWeek, setNextWeek } = weekSlice.actions
+export let { setThisWeek, setPrevWeek, setNextWeek } = weekSlice.actions
 export let { setLayout } = layoutSlice.actions
 export let { setFilter } = filterSlice.actions
+export let { setSearch } = searchSlice.actions

@@ -1,6 +1,6 @@
-import { Button, Row, Divider, Input,  Select, Form } from 'antd';
+import { Button, Row, Divider, Input,  Select, Form, Typography } from 'antd';
 import { PlusOutlined, BgColorsOutlined } from '@ant-design/icons';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ColorChangeHandler, CirclePicker } from "react-color";
 import type { InputRef } from 'antd';
 import { Dispatch } from 'redux';
@@ -10,6 +10,8 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../store'
 import { blank_pattern } from './TodoForm';
 const { Option } = Select;
+const { Text } = Typography;
+
 const defaultTagColor = '#d8d8d8';
 
 export interface Tag {
@@ -42,8 +44,13 @@ function TagList(props :{width?:number}) {
     const [ tag, setTag ] = useState('');
     const [ color, setColor ] = useState(defaultTagColor);
     const [ showColor, setShowColor ] = useState(false);
+    const [ error, setError ] = useState(false);
 
-  
+    // 태그를 중복으로 작성할 경우 에러메시지를 띄워준다.
+    useEffect(() => {
+        tagList.findIndex(t => t.tag === tag) >= 0 ? setError(true) : setError(false);
+    }, [tag]);
+
     const onTagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTag(event.target.value);
     }
@@ -56,9 +63,12 @@ function TagList(props :{width?:number}) {
     }
     const addItem = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
         e.preventDefault();
-        if(blank_pattern.test(tag)) {
+        
+        // 태그는 필터링 시 key값으로 사용되므로 중복되지 않을 경우에만 저장한다.
+        if(blank_pattern.test(tag) && tagList.findIndex(t => t.tag === tag) === -1) {
             dispatch(addTag({tag, color}))
             setTag('');
+            setError(false);
             setColor(defaultTagColor);
             setTimeout(() => {
                 inputRef.current?.focus();
@@ -69,7 +79,7 @@ function TagList(props :{width?:number}) {
     return (
         <Form.Item name="tag">
             <Select
-                style={{width: props.width}} placeholder="태그 추가" dropdownRender={(menu) => (                                    
+                style={{width: props.width}} placeholder="태그 추가" onFocus={()=>setTag('')} dropdownRender={(menu) => (                                    
                     <>
                         {menu}
                         <Divider style={{ margin: '8px 0' }} />
@@ -78,6 +88,7 @@ function TagList(props :{width?:number}) {
                                 <Input placeholder="enter tag" ref={inputRef} value={tag} onChange={onTagChange} style={{ width: 'calc(100% - 50px)' }}></Input>                                                
                                 <Button onClick={setColorPicker}><BgColorsOutlined style={{color: color}}/></Button>
                             </Input.Group>
+                            { error && <Text style={{'color': '#dc4446'}}>동일한 태그가 존재합니다.</Text> }    
                         </Row>
                         {
                             showColor && (

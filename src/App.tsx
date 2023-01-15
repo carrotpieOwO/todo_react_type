@@ -1,43 +1,30 @@
 import './App.css';
-import { Layout, Space, Row, theme, Input } from 'antd';
+import { ConfigProvider, theme, Layout, Row } from 'antd';
 
 import WeekNavi from './components/WeekNavi';
 import DayNavi from './components/DayNavi';
 import TodoForm from './components/TodoForm';
-import TodoList from './components/TodoList';
 import ProgressBar from './components/ProgressBar';
 import OverdueList from './components/OverdueList';
 import Filter from './components/Filter';
-import TimeLine from './components/TimeLine';
 import LayoutButton from './components/LayoutButton';
-
+import HeaderBar from './components/HeaderBar';
+import ListTamplate from './components/ListTemplate';
 import { useSelector } from 'react-redux'
 import { RootState } from './store'
 
-const { Header, Footer, Content } = Layout;
-const { Search } = Input;
-
+const { Footer, Content } = Layout;
 
 function App() {
-  const {
-    token: { pink },
-  } = theme.useToken();
-
-  let layout = useSelector((state :RootState) => state.layout);
-
+  let selectedTheme = useSelector((state :RootState) => state.theme);
+  let themeConfig = {
+    algorithm: selectedTheme ? theme.defaultAlgorithm : theme.darkAlgorithm,
+    token: {colorPrimary: '#eb2f96'} 
+  }
   return (
+    <ConfigProvider theme={themeConfig}>
       <Layout style={{height:'100vh'}}>
-        <Header>
-          <Row justify="space-between" align={'middle'}>
-            <Space wrap style={{color: pink}}>
-              <div>ha0 Todo❣️</div>
-              <div>1/1☀️</div>
-            </Space>
-            <Space>
-              <Search placeholder="search" style={{ width: 200, verticalAlign: 'middle' }} onSearch={value => console.log(value)} allowClear/>
-            </Space>
-          </Row>
-        </Header>
+        <HeaderBar/>
         <Content style={{ padding: '0 50px', margin: '16px 0' }}>
           <Row justify="end" align={'middle'} style={{paddingBottom: '10px'}}>            
               <WeekNavi/>
@@ -47,16 +34,14 @@ function App() {
           <OverdueList/>
           <ProgressBar/>
           <TodoForm/>
-          {
-            layout === 'board' ? <TodoList/> : <TimeLine/>
-          }
-          
+          <ListTamplate/>          
         </Content>
         <Footer style={{textAlign: 'center'}}>
           ha0 Todo❣️ ©2023 Created by ha0peno
         </Footer>
         <LayoutButton/>
       </Layout>
+    </ConfigProvider>
   );
 }
 

@@ -9,26 +9,11 @@ import TagList from './TagList';
 import dayjs from 'dayjs';
 import { Todo, disabledDate, blank_pattern } from './TodoForm';
 
-export function filterTodo(todoList:Todo[], filter:string) {
-    let filteredTodo = [];
-    if(filter === 'all') {
-        filteredTodo = todoList
-    } else if (filter === 'Incomplete') {
-        filteredTodo = todoList.filter(todo => !todo.done);
-    } else {
-        filteredTodo = todoList.filter(todo => todo.tag?.tag === filter)
-    }
-    return filteredTodo;
-}
-
-function TodoList() {
+function TodoList(props :{todoList: Todo[]}) {
     const inputRef = useRef<InputRef>(null);
-    let todoList = useSelector((state :RootState) => state.todo);
     let tagList = useSelector((state :RootState) => state.tag);
     let isOpen = useSelector((state :RootState) => state.form.editform);
-    let selectedDay = useSelector((state :RootState) => state.selectedDay);    
-    let filter = useSelector((state :RootState) => state.filter);
-    let todayList = todoList.filter(todo => todo.date === selectedDay);
+
     const dispatch :Dispatch = useDispatch();
 
     const [ editTarget, setEditTarget ] = useState('');
@@ -38,8 +23,6 @@ function TodoList() {
             cursor: 'end',
         });
     });
-
-    let filteredTodo = filterTodo(todayList, filter);
     
     const onOpen = (id :string) => (event: React.MouseEvent) => {
         dispatch(setAddForm(false));
@@ -67,7 +50,7 @@ function TodoList() {
     return (        
         <>
             {
-                filteredTodo.map(todo =>
+                props.todoList.map(todo =>
                     todo.id === editTarget &&  isOpen ?
                     <Card key={todo.id} size='small' style={{margin: '4px 0'}}>
                         <Form onFinish={onSubmit} onFinishFailed={onFinishFailed} initialValues={{tag: todo.tag?.tag}}>
