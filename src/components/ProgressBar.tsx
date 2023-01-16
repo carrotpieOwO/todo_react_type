@@ -1,15 +1,11 @@
 import { Progress, Divider, Typography, Row } from 'antd';
-import { useSelector } from 'react-redux'
-import { RootState } from '../store'
+import { Todo } from './TodoForm';
 
 const { Text } = Typography;
 
-function ProgressBar() {
-    const todoList = useSelector((state :RootState) => state.todo);
-    let selectedDay = useSelector((state :RootState) => state.selectedDay);    
-    let todayList = todoList.filter(todo => todo.date === selectedDay);
-    const doneTodo = todayList.filter(todo => todo.done === true);
-    const percentage = parseFloat((doneTodo.length * 100 / todayList.length).toFixed(2));
+function ProgressBar(props :{todayList :Todo[]}) {
+    const doneTodo = props.todayList.filter(todo => todo.done === true);
+    const percentage = parseFloat((doneTodo.length * 100 / props.todayList.length).toFixed(2));
 
     const message = isNaN(percentage) ? '오늘의 할일을 추가해봐요!'
     : percentage === 0  ? '하루를 시작합시다!😀' 
@@ -21,7 +17,7 @@ function ProgressBar() {
 
     return (
         <>
-            <Divider orientation="left">오늘의 할일({todayList.length}) ✍🏻</Divider>
+            <Divider orientation="left">오늘의 할일({props.todayList.length}) ✍🏻</Divider>
             <Progress percent={percentage} status="active" strokeColor={{ from: '#fb9ec4', to: '#8865ff' }} />
             <Row justify={'center'} style={{'margin': '15px 0'}}>
                 <Text>{message}</Text>

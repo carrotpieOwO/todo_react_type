@@ -36,6 +36,7 @@ const colors = [
     "#FA28FF",
     "#FDA1FF"
 ]
+
 function TagList(props :{width?:number}) {
     const inputRef = useRef<InputRef>(null);
     const dispatch :Dispatch = useDispatch()
@@ -44,11 +45,13 @@ function TagList(props :{width?:number}) {
     const [ tag, setTag ] = useState('');
     const [ color, setColor ] = useState(defaultTagColor);
     const [ showColor, setShowColor ] = useState(false);
-    const [ error, setError ] = useState(false);
+    const [ errorMsg, setErrorMsg ] = useState('');
 
-    // 태그를 중복으로 작성할 경우 에러메시지를 띄워준다.
+    // 태그를 중복으로 작성하거나 ,를 포함시킬 경우 에러메시지를 띄워준다.
     useEffect(() => {
-        tagList.findIndex(t => t.tag === tag) >= 0 ? setError(true) : setError(false);
+        tagList.findIndex(t => t.tag === tag) >= 0 ? setErrorMsg('동일한 태그가 존재합니다.')
+        : tag.includes(',') ? setErrorMsg(',는 사용할 수 없습니다.')
+        : setErrorMsg('')
     }, [tag]);
 
     const onTagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,11 +67,11 @@ function TagList(props :{width?:number}) {
     const addItem = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
         e.preventDefault();
         
-        // 태그는 필터링 시 key값으로 사용되므로 중복되지 않을 경우에만 저장한다.
-        if(blank_pattern.test(tag) && tagList.findIndex(t => t.tag === tag) === -1) {
+        // validation check후 저장한다.
+        if(blank_pattern.test(tag) && tagList.findIndex(t => t.tag === tag) === -1 && !tag.includes(',')) {
             dispatch(addTag({tag, color}))
             setTag('');
-            setError(false);
+            setErrorMsg('');
             setColor(defaultTagColor);
             setTimeout(() => {
                 inputRef.current?.focus();
@@ -88,7 +91,7 @@ function TagList(props :{width?:number}) {
                                 <Input placeholder="enter tag" ref={inputRef} value={tag} onChange={onTagChange} style={{ width: 'calc(100% - 50px)' }}></Input>                                                
                                 <Button onClick={setColorPicker}><BgColorsOutlined style={{color: color}}/></Button>
                             </Input.Group>
-                            { error && <Text style={{'color': '#dc4446'}}>동일한 태그가 존재합니다.</Text> }    
+                            { errorMsg && <Text style={{'color': '#dc4446'}}>{errorMsg}</Text> }    
                         </Row>
                         {
                             showColor && (
@@ -105,11 +108,11 @@ function TagList(props :{width?:number}) {
             >
                 {
                     tagList.map(item => (
-                        <Option key={item.tag} value={item.tag} label={item.tag}>
+                        <Option key={item.tag} value={`${item.tag},${item.color}`} label={item.tag}>
                             <Row align={'middle'}>                                        
                                 <div style={{width:'16px', height: '16px', backgroundColor: item.color, borderRadius: '3px', marginRight: '3px'}}></div>
                                 {item.tag}
-                            </Row>                                    
+                            </Row>
                         </Option>
                     ))
                 }

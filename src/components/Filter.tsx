@@ -16,7 +16,6 @@ function Filter() {
     });
 
     const handleMenuClick: MenuProps['onClick'] = (e) => {
-        console.log('click', e);
         dispatch(setFilter(e.key));
     };
 

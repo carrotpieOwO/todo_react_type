@@ -1,6 +1,6 @@
 import { Space, Button, Row, Typography } from 'antd';
 import { useDispatch, useSelector } from 'react-redux'
-import { RootState, setDay, setAddForm } from '../store'
+import { RootState, setDay, setThisWeek } from '../store'
 import { Dispatch } from 'redux';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
@@ -9,7 +9,7 @@ dayjs.locale('ko');
 
 const { Text } = Typography;
 
-function WeekButton() {
+function DayButton() {
     const dispatch :Dispatch = useDispatch();
     let selectedDay = useSelector((state :RootState) => state.selectedDay);
     let week = useSelector((state :RootState) => state.week);
@@ -19,17 +19,21 @@ function WeekButton() {
       padding: '16px 0'
     }
 
+    let inWeek = week.find(w => w === selectedDay);
+
+    // 이번주/다음주 버튼으로 week를 변경했을 경우 해당 week의 첫번째 날을 선택한다.
     useEffect(() => {
-        dispatch(setDay(week[0]));
+        inWeek ?? dispatch(setDay(week[0]));
     }, [week])
+
+    // 출력된 날짜버튼 중 선택한 날짜가 없을 경우 해당 날짜가 있는 주간으로 날짜버튼을 생성한다.
+    useEffect(() => {
+        inWeek ?? dispatch(setThisWeek())
+    }, [selectedDay])
 
     useEffect(() => {
         dispatch(setDay(selectedDay))
     }, [])
-
-    useEffect(() => {
-        dispatch(setAddForm(false));        
-    }, [selectedDay])
 
     const changeDate = (d:string) => {
         dispatch(setDay(d));
@@ -51,4 +55,4 @@ function WeekButton() {
     )
 }
 
-export default WeekButton;
+export default DayButton;

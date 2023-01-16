@@ -3,15 +3,13 @@ import { ConfigProvider, theme, Layout, Row } from 'antd';
 
 import WeekNavi from './components/WeekNavi';
 import DayNavi from './components/DayNavi';
-import TodoForm from './components/TodoForm';
-import ProgressBar from './components/ProgressBar';
 import OverdueList from './components/OverdueList';
 import Filter from './components/Filter';
 import LayoutButton from './components/LayoutButton';
 import HeaderBar from './components/HeaderBar';
-import ListTamplate from './components/ListTemplate';
 import { useSelector } from 'react-redux'
 import { RootState } from './store'
+import TodoContent from './components/TodoContent';
 
 const { Footer, Content } = Layout;
 
@@ -32,9 +30,7 @@ function App() {
           </Row>
           <DayNavi/>
           <OverdueList/>
-          <ProgressBar/>
-          <TodoForm/>
-          <ListTamplate/>          
+          <TodoContent/>
         </Content>
         <Footer style={{textAlign: 'center'}}>
           ha0 Todo❣️ ©2023 Created by ha0peno

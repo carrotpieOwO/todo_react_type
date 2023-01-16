@@ -1,6 +1,7 @@
 import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Todo } from './components/TodoForm';
 import { Tag } from './components/TagList';
+import { layoutType } from './components/LayoutButton';
 import dayjs, { Dayjs } from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
 dayjs.extend(weekday)
@@ -25,6 +26,7 @@ const todoSlice = createSlice({
         },
         editTodo (state, action :PayloadAction<Todo>) {
             const payload = action.payload;
+            console.log('payload', payload)
             const targetIndex = state.findIndex(todo => todo.id === payload.id);
             state[targetIndex].todo = payload.todo;
             state[targetIndex].date = payload.date;
@@ -56,7 +58,7 @@ const tagSlice = createSlice({
 
 const initialFormState = {
     addForm: false,
-    editform: false
+    editTarget: ''
 }
 const formSlice = createSlice({
     name: 'form',
@@ -65,8 +67,8 @@ const formSlice = createSlice({
         setAddForm (state, action:PayloadAction<boolean>) {
             state.addForm = action.payload;
         },
-        setEditForm (state, action:PayloadAction<boolean>) {
-            state.editform = action.payload;
+        setEditForm (state, action:PayloadAction<string>) {
+            state.editTarget = action.payload;
         }
     }
 })
@@ -98,7 +100,8 @@ const weekSlice = createSlice({
     initialState: initialWeekState,
     reducers: {
         setThisWeek (state) {
-            return createWeek(dayjs())            
+            let targetDay = dayjs().weekday(0);
+            return createWeek(targetDay)            
         },
         setPrevWeek (state) {
             let targetDay = dayjs(state[0]).subtract(7, 'day').weekday(0);
@@ -111,7 +114,7 @@ const weekSlice = createSlice({
     }
 })
 
-type layoutType = 'board' | 'timeLine';
+
 const layoutSlice = createSlice({
     name: 'layout',
     initialState: 'board',

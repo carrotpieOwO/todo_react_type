@@ -22,17 +22,15 @@ export interface Todo {
     tag? :Tag,
 }
 export const disabledDate: RangePickerProps['disabledDate'] = (current) => {
-    // Can not select days before today and today
+    // 오늘날짜 이전 날짜는 선택할 수 없다.
     return current < dayjs().startOf('day');
 };
 export const blank_pattern = /\S/g;
 
-function TodoForm() {
+function TodoForm(props: {day :string}) {
     const inputRef = useRef<InputRef>(null);
     const dispatch :Dispatch = useDispatch()
-    let tagList = useSelector((state :RootState) => state.tag);
     let isOpen = useSelector((state :RootState) => state.form.addForm);
-    let selectedDay = useSelector((state :RootState) => state.selectedDay);    
 
     useEffect(() => {
         inputRef.current?.focus({
@@ -46,23 +44,26 @@ function TodoForm() {
     
     const onOpen = () => {
         dispatch(setAddForm(true));
-        dispatch(setEditForm(false));
+        dispatch(setEditForm(''));
     }
 
-    const onSubmit = (values: any) => {    
+    const onSubmit = (values: any) => {
+        const tagArr = values.tag ? values.tag.split(',') : undefined;
+
         const newTodo :Todo = {            
             ...values, 
             id :uuid(), 
             done: false, 
             date: dayjs(values.date).format('YYYY-MM-DD'), 
             time: values.time && dayjs(values.time).format('HH:mm'),
-            tag: tagList.find(tag => tag.tag === values.tag)
+            tag: tagArr ? {tag: tagArr[0], color: tagArr[1]} : undefined
         }
         
         dispatch(addTodo(newTodo));
         dispatch(setAddForm(false));
     }
 
+    // 테스트용
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
     };
@@ -77,7 +78,7 @@ function TodoForm() {
                     <Divider></Divider>
                     <Row justify={'space-between'}>
                         <Space wrap>
-                            <Form.Item name="date" initialValue={dayjs(selectedDay)}>
+                            <Form.Item name="date" initialValue={dayjs(props.day)}>
                                 <DatePicker disabledDate={disabledDate}/>
                             </Form.Item>                            
                             <Form.Item name="time">

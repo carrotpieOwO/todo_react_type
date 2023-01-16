@@ -1,23 +1,15 @@
 import { Layout, Space, Row, Input, Button, Switch } from 'antd';
 import dayjs from 'dayjs';
-import { RootState, setSearch, setDay, changeTheme, setThisWeek} from '../store'
+import { setSearch, setDay, changeTheme } from '../store'
 import { Dispatch } from 'redux';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 const { Header } = Layout;
 const { Search } = Input;
 
 function HeaderBar () {
     const dispatch :Dispatch = useDispatch();
-    let week = useSelector((state :RootState) => state.week);
-    let selectedDay = useSelector((state :RootState) => state.selectedDay);
 
-    useEffect(() => {
-        let inWeek = week.find(w => w === selectedDay);
-        inWeek ?? dispatch(setThisWeek())
-    }, [selectedDay])
-    
     const setToday = () => {
         dispatch(setDay(dayjs().format('YYYY-MM-DD')));                
     }
