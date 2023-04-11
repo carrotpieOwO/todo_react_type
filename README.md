@@ -13,7 +13,7 @@
 
 
 ## 📸  Preview
-### 👉🏻 [배포사이트 보러가기](https://weather-wear.netlify.app/)
+### 👉🏻 [배포사이트 보러가기](https://carrotpieowo.github.io/)
 <br />
 <div style="dispaly: flex">
 <img width="40%" alt="todoTag" src="https://user-images.githubusercontent.com/59003343/227700275-e03917f2-98f0-4d06-8807-208c9e7f0c90.png">
